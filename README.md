@@ -65,10 +65,12 @@ Authentication: JWT (Access + Refresh), Google OAuth
 Hosting: Vercel (Frontend), Render (Backend), Aiven (DB)
 
 5. API Overview
-Endpoint	Method	Description
-/api/auth/signup	POST	Register new user
-/api/auth/login	POST	Authenticate user
-/api/projects	POST	Create new project
-/api/tasks	GET	List all tasks (with filters & sorting)
-/api/tasks/:id	PUT	Update task
-/api/analytics/:projectId/summary	GET	Fetch analytics summary
+
+| Endpoint                             | Method | Description                           |
+|--------------------------------------|--------|---------------------------------------|
+| /api/auth/signup                     | POST   | Register new user                     |
+| /api/auth/login                      | POST   | Authenticate user                     |
+| /api/projects                        | POST   | Create new project                    |
+| /api/tasks                           | GET    | List all tasks (with filters & sorting) |
+| /api/tasks/:id                       | PUT    | Update task                           |
+| /api/analytics/:projectId/summary    | GET    | Fetch analytics summary               |
