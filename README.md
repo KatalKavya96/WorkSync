@@ -6,63 +6,64 @@ WorkSync provides a central hub for planning, assigning, and tracking tasks with
 
 2. System Architecture
 
-Frontend (React + React Router) → Backend (Express REST API) → Database (PostgreSQL)
+-Frontend (React + React Router) → Backend (Express REST API) → Database (PostgreSQL)
 
-Hosting:
-Frontend – Vercel
-Backend – Render
-Database – Aiven
+-Hosting:
+-Frontend – Vercel
+-Backend – Render
+-Database – Aiven
 
 3. Key Features
-Authentication & Authorization
 
-Signup/login
+-Authentication & Authorization
 
-JWT
+-Signup/login
 
-Roles (Admin/Manager/Member)
+-JWT
 
-Project Workspace
+-Roles (Admin/Manager/Member)
 
-Create projects
+-Project Workspace
 
-Invite members
+-Create projects
 
-Set permissions
+-Invite members
 
-Task Management
+-Set permissions
 
-CRUD tasks
+-Task Management
 
-Subtasks
+-CRUD tasks
 
-Due dates
+-Subtasks
 
-Priorities
+-Due dates
 
-Tags
+-Priorities
 
-Filtration & Sorting
+-Tags
 
-Filter tasks by status, priority, due date, assigned member, and tags
+-Filtration & Sorting
 
-Sort tasks by due date, priority, creation time, or alphabetical order
+-Filter tasks by status, priority, due date, assigned member, and tags
 
-Quick search bar to instantly find tasks across the project
+-Sort tasks by due date, priority, creation time, or alphabetical order
 
-Analytics
+-Quick search bar to instantly find tasks across the project
 
-Burn-down chart
+-Analytics
 
-Completion percentage
+-Burn-down chart
+
+-Completion percentage
 
 4. Tech Stack
 
-Frontend: React.js, React Router, TailwindCSS
-Backend: Node.js, Express.js
-Database: MySQL + Prisma ORM
-Authentication: JWT (Access + Refresh), Google OAuth
-Hosting: Vercel (Frontend), Render (Backend), Aiven (DB)
+-Frontend: React.js, React Router, TailwindCSS
+-Backend: Node.js, Express.js
+-Database: MySQL + Prisma ORM
+-Authentication: JWT (Access + Refresh), Google OAuth
+-Hosting: Vercel (Frontend), Render (Backend), Aiven (DB)
 
 5. API Overview
 
