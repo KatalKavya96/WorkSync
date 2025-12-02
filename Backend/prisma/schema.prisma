@@ -1,14 +1,36 @@
 datasource db {
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
   provider = "mysql"
 }
+
 generator client {
   provider = "prisma-client-js"
 }
+
 model user {
-  id Int @id @default(autoincrement())
-  name String
-  email String @unique
-  password String
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
   createdAt DateTime @default(now())
+
+  tasks     task[]
+}
+
+model task {
+  id        Int        @id @default(autoincrement())
+  title     String
+  notes     String?
+  status    TaskStatus @default(PENDING)
+  date      DateTime
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user      user       @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+enum TaskStatus {
+  PENDING
+  DONE
 }

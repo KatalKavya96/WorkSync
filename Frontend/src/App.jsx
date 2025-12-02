@@ -1,19 +1,23 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import './App.css';
-import Auth from "./pages/Auth";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
 import Home from "./pages/Home";
+import Auth from "./pages/Auth";
+import Tasks from "./pages/Tasks";
+import Analytics from "./pages/Analytics"; // 👈 new
 
 function App() {
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/auth" element={<Auth />} />
-      </Routes>
-    </BrowserRouter>
-  )
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="tasks" element={<Tasks />} />
+        <Route path="analytics" element={<Analytics />} />
+      </Route>
+
+      <Route path="/auth" element={<Auth />} />
+    </Routes>
+  );
 }
 
 export default App;
