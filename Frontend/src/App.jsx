@@ -5,7 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Tasks from "./pages/Tasks";
-import Analytics from "./pages/Analytics"; // 👈 new
+import Analytics from "./pages/Analytics"; // new
 import Calendar from "./pages/Calendar";
 import Goals from "./pages/Goals";
 import Settings from "./pages/Settings";

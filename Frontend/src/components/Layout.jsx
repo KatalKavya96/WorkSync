@@ -4,12 +4,12 @@ import { useAuth } from "../context/useAuth.js";
 import { Toaster } from "react-hot-toast";
 
 const navItems = [
-  { to: "/", label: "Overview", icon: "📊" },
-  { to: "/tasks", label: "Tasks", icon: "📝" },
-  { to: "/analytics", label: "Analytics", icon: "📈" },
-  { to: "/calendar", label: "Calendar", icon: "📅" },
-  { to: "/goals", label: "Goals", icon: "🎯" },
-  { to: "/settings", label: "Settings", icon: "⚙️" },
+  { to: "/", label: "Overview" },
+  { to: "/tasks", label: "Tasks" },
+  { to: "/analytics", label: "Analytics" },
+  { to: "/calendar", label: "Calendar" },
+  { to: "/goals", label: "Goals" },
+  { to: "/settings", label: "Settings" },
 ];
 
 const Layout = () => {
@@ -52,7 +52,6 @@ const Layout = () => {
                 ].join(" ")
               }
             >
-              <span className="text-base">{item.icon}</span>
               <span className="font-medium tracking-wide">{item.label}</span>
               <span className="ml-auto h-2 w-2 rounded-full bg-slate-700 group-hover:bg-slate-500" />
             </NavLink>
