@@ -25,10 +25,12 @@ const handleLogin = async (req, res) => {
     }
 
     const token = jwt.sign({
+      id: user.id,
       name: user.name,
       email: user.email
     }, process.env.JWT_SECRET, {expiresIn: "24h"});
     const refreshToken = jwt.sign({
+      id: user.id,
       name: user.name,
       email: user.email
     }, process.env.JWT_SECRET, {expiresIn: "30d"});
@@ -92,8 +94,23 @@ const handleRefresh = async (req, res) => {
   try {
     const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
 
-    const newToken = jwt.sign({name: decoded.name, email: decoded.email}, process.env.JWT_SECRET, {expiresIn: "24h"});
-    const newRefreshToken = jwt.sign({name: decoded.name, email: decoded.email}, process.env.JWT_SECRET, {expiresIn: "30d"});
+    // Backward-compatible: if older refresh tokens don't have id, fetch user by email
+    let userId = decoded.id;
+    let name = decoded.name;
+    let email = decoded.email;
+
+    if (!userId) {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        return res.status(400).json({ "error": "Invalid refresh token" });
+      }
+      userId = user.id;
+      name = user.name;
+      email = user.email;
+    }
+
+    const newToken = jwt.sign({ id: userId, name, email }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    const newRefreshToken = jwt.sign({ id: userId, name, email }, process.env.JWT_SECRET, { expiresIn: "30d" });
 
     return res.status(200).json({
       "message": "New token generated",

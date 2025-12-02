@@ -139,7 +139,7 @@ const Analytics = () => {
           </div>
         </div>
 
-        <div className="h-60">
+        <div className="h-60 min-w-0">
           {loading ? (
             <div className="h-full flex items-center justify-center text-xs text-slate-500">
               Loading chart...
