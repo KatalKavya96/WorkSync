@@ -1,15 +1,14 @@
 // src/context/AuthContext.jsx
-import { createContext, useContext, useState } from "react";
-
-const AuthContext = createContext(null);
+import { useState } from "react";
+import { AuthContext } from "./AuthCore.js";
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem("ws_token"));
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [refreshToken, setRefreshToken] = useState(() =>
-    localStorage.getItem("ws_refresh_token")
+    localStorage.getItem("refreshToken")
   );
   const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("ws_user");
+    const stored = localStorage.getItem("user");
     return stored ? JSON.parse(stored) : null;
   });
 
@@ -22,23 +21,23 @@ export const AuthProvider = ({ children }) => {
 
     if (jwtToken) {
       setToken(jwtToken);
-      localStorage.setItem("ws_token", jwtToken);
+      localStorage.setItem("token", jwtToken);
     } else {
       setToken(null);
-      localStorage.removeItem("ws_token");
+      localStorage.removeItem("token");
     }
 
     if (jwtRefreshToken) {
       setRefreshToken(jwtRefreshToken);
-      localStorage.setItem("ws_refresh_token", jwtRefreshToken);
+      localStorage.setItem("refreshToken", jwtRefreshToken);
     } else {
       setRefreshToken(null);
-      localStorage.removeItem("ws_refresh_token");
+      localStorage.removeItem("refreshToken");
     }
 
     if (userData) {
       setUser(userData);
-      localStorage.setItem("ws_user", JSON.stringify(userData));
+      localStorage.setItem("user", JSON.stringify(userData));
     }
   };
 
@@ -46,9 +45,9 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setRefreshToken(null);
     setUser(null);
-    localStorage.removeItem("ws_token");
-    localStorage.removeItem("ws_refresh_token");
-    localStorage.removeItem("ws_user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
   };
 
   const value = {
@@ -61,6 +60,4 @@ export const AuthProvider = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
-// 🔥 This is the named export Vite is complaining about
-export const useAuth = () => useContext(AuthContext);
+// Note: Consumers should import the hook from `useAuth.js` to avoid Fast Refresh warnings.

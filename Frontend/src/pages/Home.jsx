@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import api from "../api/client";
 
 const Home = () => {
   const [user, setUser] = useState(null);
+  const [stats, setStats] = useState({ total: 0, done: 0 });
 
   const fetchData = async (token, refreshed) => {
     try {
@@ -76,29 +78,48 @@ const Home = () => {
     }
 
     fetchData(token, false);
+    // Fetch tasks for overview stats
+    (async () => {
+      try {
+        const res = await api.get("/tasks");
+        const tasks = res.data || [];
+        const done = tasks.filter((t) => t.status === "DONE").length;
+        setStats({ total: tasks.length, done });
+      } catch (err) {
+        console.log("Error fetching overview stats:", err);
+      }
+    })();
   }, []);
 
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
       {user && (
-        <div className="flex flex-wrap items-center justify-center gap-8 w-full h-[100vh] bg-slate-950">
-          <div className="bg-white rounded-2xl pb-4 overflow-hidden border border-gray-300">
-            <div className="w-64 flex justify-center pt-10">
-              <div className="w-28 h-28 rounded-full overflow-hidden">
-                <img
-                  className="h-32 object-cover object-top"
-                  src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200"
-                  alt="user avatar"
-                />
+        <div className="space-y-5">
+          <div className="rounded-2xl bg-gradient-to-r from-indigo-500/20 to-emerald-500/20 border border-slate-800 p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-50">Welcome back, {user.name}</h2>
+                <p className="text-xs text-slate-300">{user.email}</p>
               </div>
+              <div className="hidden sm:block text-[11px] text-slate-400">Overview of your activity</div>
             </div>
-            <div className="flex flex-col items-center">
-              <p className="font-medium mt-3">{user.name}</p>
-              <p className="text-gray-500 text-sm">{user.email}</p>
-              <button className="border text-sm text-gray-500 border-gray-500/30 w-28 h-8 rounded-full mt-5">
-                <p className="mb-1">message</p>
-              </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
+              <div className="text-[11px] uppercase tracking-wide text-slate-400">Total tasks</div>
+              <div className="mt-2 text-2xl font-semibold text-slate-50">{stats.total}</div>
+            </div>
+            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
+              <div className="text-[11px] uppercase tracking-wide text-slate-400">Completed</div>
+              <div className="mt-2 text-2xl font-semibold text-emerald-400">{stats.done}</div>
+            </div>
+            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
+              <div className="text-[11px] uppercase tracking-wide text-slate-400">Completion rate</div>
+              <div className="mt-2 text-2xl font-semibold text-sky-400">
+                {stats.total ? Math.round((stats.done / stats.total) * 100) : 0}%
+              </div>
             </div>
           </div>
         </div>

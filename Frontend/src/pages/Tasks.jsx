@@ -129,6 +129,15 @@ const Tasks = () => {
 
   return (
     <div className="space-y-5">
+      <div className="rounded-2xl bg-gradient-to-r from-emerald-500/20 to-indigo-500/20 border border-slate-800 p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-50">Tasks</h2>
+            <p className="text-xs text-slate-400">Capture routines and finish what matters most.</p>
+          </div>
+          <div className="hidden sm:block text-[11px] text-slate-400">Quick add below</div>
+        </div>
+      </div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-slate-50">Tasks</h2>
