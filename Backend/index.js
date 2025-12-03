@@ -7,6 +7,7 @@ const authRoutes = require('./auth/routes');
 const userRoutes = require('./user/routes');
 const taskRoutes = require('./task/routes');
 const { authenticate } = require('./auth/middleware');
+const projectRoutes = require('./project/routes');
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use(authenticate);
 
 app.use('/', userRoutes);
 app.use('/tasks', taskRoutes);
+app.use('/projects', projectRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server now running at port ${PORT}`);

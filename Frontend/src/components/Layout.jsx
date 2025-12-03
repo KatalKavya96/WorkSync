@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 
 const navItems = [
   { to: "/", label: "Overview" },
+  { to: "/projects", label: "Projects" },
   { to: "/tasks", label: "Tasks" },
   { to: "/analytics", label: "Analytics" },
   { to: "/calendar", label: "Calendar" },

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { getTasks, createTask, updateTask, deleteTask } from "../api/tasks";
+import { listProjects } from "../api/projects";
 import toast from "react-hot-toast";
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
@@ -13,6 +14,7 @@ const toDateOnly = (value) => {
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [meta, setMeta] = useState({ total: 0, page: 1, totalPages: 1, pageSize: 10 });
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [query, setQuery] = useState({
@@ -21,6 +23,9 @@ const Tasks = () => {
     sortBy: "date",
     sortOrder: "desc",
     status: "",
+    priority: "",
+    projectId: "",
+    tags: "",
     dateFrom: "",
     dateTo: "",
     q: "",
@@ -29,6 +34,9 @@ const Tasks = () => {
     title: "",
     notes: "",
     date: todayISO(),
+    priority: "NORMAL",
+    projectId: "",
+    tags: "",
   });
 
   const fetchTasks = async () => {
@@ -40,6 +48,9 @@ const Tasks = () => {
         sortBy: query.sortBy,
         sortOrder: query.sortOrder,
         status: query.status || undefined,
+        priority: query.priority || undefined,
+        projectId: query.projectId ? Number(query.projectId) : undefined,
+        tags: query.tags || undefined,
         dateFrom: query.dateFrom || undefined,
         dateTo: query.dateTo || undefined,
         q: query.q || undefined,
@@ -58,7 +69,20 @@ const Tasks = () => {
   useEffect(() => {
     fetchTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query.page, query.pageSize, query.sortBy, query.sortOrder, query.status, query.dateFrom, query.dateTo, query.q]);
+  }, [query.page, query.pageSize, query.sortBy, query.sortOrder, query.status, query.priority, query.projectId, query.tags, query.dateFrom, query.dateTo, query.q]);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const res = await listProjects();
+        setProjects(res.data || []);
+      } catch (err) {
+        console.error("Error loading projects:", err);
+        toast.error("Failed to load projects");
+      }
+    };
+    loadProjects();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,6 +98,15 @@ const Tasks = () => {
         title: form.title.trim(),
         notes: form.notes.trim() || undefined,
         date: form.date || todayISO(),
+        priority: form.priority || "NORMAL",
+        projectId: form.projectId ? Number(form.projectId) : undefined,
+        tags:
+          form.tags
+            ? form.tags
+                .split(",")
+                .map((t) => t.trim())
+                .filter((t) => t.length > 0)
+            : undefined,
       };
       await createTask(payload);
       await fetchTasks();
@@ -81,6 +114,9 @@ const Tasks = () => {
         title: "",
         notes: "",
         date: todayISO(),
+        priority: "NORMAL",
+        projectId: "",
+        tags: "",
       });
       toast.success("Task added");
     } catch (err) {
@@ -253,6 +289,16 @@ const Tasks = () => {
             <option value="PENDING">Pending</option>
             <option value="DONE">Done</option>
           </select>
+          <select
+            value={query.priority}
+            onChange={(e) => setQuery((prev) => ({ ...prev, priority: e.target.value, page: 1 }))}
+            className="w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-50"
+          >
+            <option value="">All priorities</option>
+            <option value="LOW">Low</option>
+            <option value="NORMAL">Normal</option>
+            <option value="HIGH">High</option>
+          </select>
           <div className="flex gap-2">
             <input
               type="date"
@@ -297,6 +343,22 @@ const Tasks = () => {
             <option value={20}>20 per page</option>
             <option value={50}>50 per page</option>
           </select>
+          <select
+            value={query.projectId}
+            onChange={(e) => setQuery((prev) => ({ ...prev, projectId: e.target.value, page: 1 }))}
+            className="w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-50"
+          >
+            <option value="">All projects</option>
+            {projects.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+          <input
+            placeholder="Filter tags: comma-separated"
+            value={query.tags}
+            onChange={(e) => setQuery((prev) => ({ ...prev, tags: e.target.value, page: 1 }))}
+            className="w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-50 outline-none"
+          />
         </div>
       </div>
 
@@ -307,7 +369,7 @@ const Tasks = () => {
         </h3>
         <form
           onSubmit={handleAddTask}
-          className="grid grid-cols-1 md:grid-cols-[2fr,2fr,0.9fr] gap-3"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
         >
           <div>
             <label className="text-[11px] uppercase tracking-wide text-slate-400 mb-1 block">
@@ -352,6 +414,49 @@ const Tasks = () => {
                 Add
               </button>
             </div>
+          </div>
+          <div>
+            <label className="text-[11px] uppercase tracking-wide text-slate-400 mb-1 block">
+              Priority
+            </label>
+            <select
+              name="priority"
+              value={form.priority}
+              onChange={handleChange}
+              className="w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-50"
+            >
+              <option value="LOW">Low</option>
+              <option value="NORMAL">Normal</option>
+              <option value="HIGH">High</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-[11px] uppercase tracking-wide text-slate-400 mb-1 block">
+              Project
+            </label>
+            <select
+              name="projectId"
+              value={form.projectId}
+              onChange={handleChange}
+              className="w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-50"
+            >
+              <option value="">None</option>
+              {projects.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-[11px] uppercase tracking-wide text-slate-400 mb-1 block">
+              Tags
+            </label>
+            <input
+              name="tags"
+              value={form.tags}
+              onChange={handleChange}
+              className="w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-50 outline-none"
+              placeholder="e.g. urgent, clientA"
+            />
           </div>
         </form>
       </div>
@@ -430,6 +535,9 @@ const Tasks = () => {
                         }`}
                       >
                         {isDone ? "Done" : "Pending"}
+                      </span>
+                      <span className="px-2 py-1 rounded-full border border-slate-700 text-[11px] text-slate-300">
+                        {task.priority || "NORMAL"}
                       </span>
                       <button
                         onClick={() => handleDelete(task.id)}

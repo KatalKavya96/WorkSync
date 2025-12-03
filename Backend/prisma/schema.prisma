@@ -15,6 +15,8 @@ model user {
   createdAt DateTime @default(now())
 
   tasks     task[]
+  ownedProjects project[]
+  projectMemberships projectMember[]
 }
 
 model task {
@@ -23,14 +25,102 @@ model task {
   notes     String?
   status    TaskStatus @default(PENDING)
   date      DateTime
+  priority  TaskPriority @default(NORMAL)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
   user      user       @relation(fields: [userId], references: [id])
   userId    Int
+
+  // Optional project association
+  project    project?   @relation(fields: [projectId], references: [id])
+  projectId  Int?
+
+  // Subtasks relation
+  subtasks  subtask[]
+
+  // Tags through join table
+  tags     taskTag[]
 }
 
 enum TaskStatus {
   PENDING
   DONE
+}
+
+enum TaskPriority {
+  LOW
+  NORMAL
+  HIGH
+}
+
+model project {
+  id        Int      @id @default(autoincrement())
+  name      String
+  owner     user     @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  createdAt DateTime @default(now())
+
+  members   projectMember[]
+  tasks     task[]
+  invitations invitation[]
+}
+
+model projectMember {
+  id        Int      @id @default(autoincrement())
+  project   project  @relation(fields: [projectId], references: [id])
+  projectId Int
+  user      user     @relation(fields: [userId], references: [id])
+  userId    Int
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+
+  @@unique([projectId, userId])
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  MEMBER
+}
+
+model invitation {
+  id        Int          @id @default(autoincrement())
+  project   project      @relation(fields: [projectId], references: [id])
+  projectId Int
+  email     String
+  role      Role         @default(MEMBER)
+  status    InviteStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  tasks taskTag[]
+}
+
+model taskTag {
+  task   task @relation(fields: [taskId], references: [id])
+  taskId Int
+  tag    tag  @relation(fields: [tagId], references: [id])
+  tagId  Int
+
+  @@id([taskId, tagId])
+}
+
+model subtask {
+  id        Int        @id @default(autoincrement())
+  title     String
+  status    TaskStatus @default(PENDING)
+  createdAt DateTime   @default(now())
+
+  parent    task       @relation(fields: [parentId], references: [id])
+  parentId  Int
 }

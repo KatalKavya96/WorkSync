@@ -7,6 +7,7 @@ import Auth from "./pages/Auth";
 import Tasks from "./pages/Tasks";
 import Analytics from "./pages/Analytics"; // new
 import Calendar from "./pages/Calendar";
+import Projects from "./pages/Projects";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       >
         <Route index element={<Home />} />
         <Route path="tasks" element={<Tasks />} />
+        <Route path="projects" element={<Projects />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="calendar" element={<Calendar />} />
       </Route>
