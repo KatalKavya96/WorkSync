@@ -1,7 +1,6 @@
-// Backend/task/controllers.js
+
 const prisma = require("../prisma/prisma");
 
-// GET /tasks -> all tasks for current user
 const listTasks = async (req, res) => {
   try {
     const userId = req.user?.id;
@@ -19,8 +18,6 @@ const listTasks = async (req, res) => {
   }
 };
 
-// POST /tasks -> create a task
-// body: { title, notes?, date?, status? }
 const createTask = async (req, res) => {
   try {
     const userId = req.user?.id;
@@ -60,8 +57,7 @@ const createTask = async (req, res) => {
   }
 };
 
-// PATCH /tasks/:id -> update any subset of fields
-// body: { title?, notes?, status?, date? }
+
 const updateTask = async (req, res) => {
   try {
     const userId = req.user?.id;
@@ -124,7 +120,6 @@ const updateTask = async (req, res) => {
   }
 };
 
-// DELETE /tasks/:id
 const deleteTask = async (req, res) => {
   try {
     const userId = req.user?.id;

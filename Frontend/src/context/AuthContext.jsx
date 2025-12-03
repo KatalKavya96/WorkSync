@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import { useState } from "react";
 import { AuthContext } from "./AuthCore.js";
 
@@ -60,4 +59,3 @@ export const AuthProvider = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-// Note: Consumers should import the hook from `useAuth.js` to avoid Fast Refresh warnings.
