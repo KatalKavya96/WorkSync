@@ -6,12 +6,70 @@ const listTasks = async (req, res) => {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: "Not authenticated" });
 
+    // Query params: page, pageSize, sortBy, sortOrder, status, dateFrom, dateTo, q
+    const {
+      page = "1",
+      pageSize = "10",
+      sortBy = "date",
+      sortOrder = "desc",
+      status,
+      dateFrom,
+      dateTo,
+      q,
+    } = req.query;
+
+    const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+    const take = Math.min(Math.max(parseInt(pageSize, 10) || 10, 1), 100);
+    const skip = (pageNum - 1) * take;
+
+    // Build where clause
+    const where = { userId };
+    if (status === "PENDING" || status === "DONE") {
+      where.status = status;
+    }
+    if (dateFrom || dateTo) {
+      where.date = {};
+      if (dateFrom) {
+        const df = new Date(dateFrom);
+        if (!isNaN(df)) where.date.gte = df;
+      }
+      if (dateTo) {
+        const dt = new Date(dateTo);
+        if (!isNaN(dt)) where.date.lte = dt;
+      }
+    }
+    if (q && typeof q === "string" && q.trim().length > 0) {
+      const query = q.trim();
+      where.OR = [
+        { title: { contains: query } },
+        { notes: { contains: query } },
+      ];
+    }
+
+    // Sorting
+    const allowedSort = new Set(["date", "createdAt", "updatedAt", "status", "title"]);
+    const orderField = allowedSort.has(String(sortBy)) ? String(sortBy) : "date";
+    const orderDir = String(sortOrder).toLowerCase() === "asc" ? "asc" : "desc";
+
+    const total = await prisma.task.count({ where });
     const tasks = await prisma.task.findMany({
-      where: { userId },
-      orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+      where,
+      orderBy: [{ [orderField]: orderDir }],
+      skip,
+      take,
     });
 
-    return res.status(200).json(tasks);
+    return res.status(200).json({
+      data: tasks,
+      meta: {
+        total,
+        page: pageNum,
+        pageSize: take,
+        totalPages: Math.ceil(total / take) || 1,
+        sortBy: orderField,
+        sortOrder: orderDir,
+      },
+    });
   } catch (err) {
     console.error("Error listing tasks:", err);
     return res.status(500).json({ error: "Internal Server Error" });

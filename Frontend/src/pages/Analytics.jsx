@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import api from "../api/client";
+import { getTasks } from "../api/tasks";
 import toast from "react-hot-toast";
 import {
   LineChart,
@@ -27,8 +27,13 @@ const Analytics = () => {
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/tasks");
-      setTasks(res.data || []);
+      const now = new Date();
+      const start = new Date(now);
+      start.setDate(now.getDate() - 6);
+      const dateFrom = start.toISOString().slice(0, 10);
+      const dateTo = now.toISOString().slice(0, 10);
+      const res = await getTasks({ dateFrom, dateTo, page: 1, pageSize: 200, sortBy: "date", sortOrder: "asc" });
+      setTasks(res.data?.data || []);
     } catch (err) {
       console.error("Error fetching tasks for analytics:", err);
       toast.error("Failed to load analytics data");

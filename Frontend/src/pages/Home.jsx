@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import api from "../api/client";
+import { getTasks } from "../api/tasks";
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -78,13 +78,14 @@ const Home = () => {
     }
 
     fetchData(token, false);
-    // Fetch tasks for overview stats
+    // Fetch stats via backend meta totals
     (async () => {
       try {
-        const res = await api.get("/tasks");
-        const tasks = res.data || [];
-        const done = tasks.filter((t) => t.status === "DONE").length;
-        setStats({ total: tasks.length, done });
+        const allRes = await getTasks({ page: 1, pageSize: 1 });
+        const allMeta = allRes.data?.meta || { total: 0 };
+        const doneRes = await getTasks({ status: "DONE", page: 1, pageSize: 1 });
+        const doneMeta = doneRes.data?.meta || { total: 0 };
+        setStats({ total: allMeta.total || 0, done: doneMeta.total || 0 });
       } catch (err) {
         console.log("Error fetching overview stats:", err);
       }

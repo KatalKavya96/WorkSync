@@ -8,8 +8,6 @@ const navItems = [
   { to: "/tasks", label: "Tasks" },
   { to: "/analytics", label: "Analytics" },
   { to: "/calendar", label: "Calendar" },
-  { to: "/goals", label: "Goals" },
-  { to: "/settings", label: "Settings" },
 ];
 
 const Layout = () => {

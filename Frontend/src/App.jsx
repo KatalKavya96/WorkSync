@@ -7,8 +7,6 @@ import Auth from "./pages/Auth";
 import Tasks from "./pages/Tasks";
 import Analytics from "./pages/Analytics"; // new
 import Calendar from "./pages/Calendar";
-import Goals from "./pages/Goals";
-import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -25,8 +23,6 @@ function App() {
         <Route path="tasks" element={<Tasks />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="calendar" element={<Calendar />} />
-        <Route path="goals" element={<Goals />} />
-        <Route path="settings" element={<Settings />} />
       </Route>
 
       <Route path="/auth" element={<Auth />} />
