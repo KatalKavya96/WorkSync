@@ -65,7 +65,8 @@ const Auth = () => {
         });
         setState("login");
       } else {
-        // LOGIN
+        
+        
         const res = await api.post("/auth/login", {
           email: data.email,
           password: data.password,
